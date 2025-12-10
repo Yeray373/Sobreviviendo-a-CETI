@@ -72,6 +72,7 @@ int main() {
         tablero.Dibujar(gameWindow);
         jugador.Dibujar(gameWindow);
         gameWindow.display();
+        \\Arthur estuvo aqui 
     }
 
     return 0;
