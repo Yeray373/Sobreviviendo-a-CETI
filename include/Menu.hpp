@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <Pantalla.hpp>
+#include <GestorMusica.hpp>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -32,21 +33,21 @@ private:
     sf::RectangleShape barraVolumen;
     sf::RectangleShape indicadorVolumen;
     sf::Text textoVolumen;
+    
+    // Referencia al gestor de música
+    GestorMusica* gestorMusica;
 
 public:
-    Menu() : opcionSeleccionada(0), ajustandoVolumen(false), volumenActual(50.f), tieneImagenFondo(false) {
+    Menu(GestorMusica* gestor = nullptr) : opcionSeleccionada(0), ajustandoVolumen(false), volumenActual(50.f), tieneImagenFondo(false), gestorMusica(gestor) {
         // Cargar fuente (probar múltiples rutas)
         bool fuenteCargada = false;
         
-        if (fuente.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
+        if (fuente.loadFromFile("./assets/fonts/Supersonic Rocketship.ttf")) {
             fuenteCargada = true;
-            std::cout << "Fuente cargada: arial.ttf" << std::endl;
+            std::cout << "Fuente cargada: Supersonic Rocketship.ttf" << std::endl;
         } else if (fuente.loadFromFile("C:/Windows/Fonts/Arial.ttf")) {
             fuenteCargada = true;
             std::cout << "Fuente cargada: Arial.ttf" << std::endl;
-        } else if (fuente.loadFromFile("./assets/fonts/arial.ttf")) {
-            fuenteCargada = true;
-            std::cout << "Fuente cargada desde assets" << std::endl;
         } else {
             std::cout << "ERROR: No se pudo cargar ninguna fuente!" << std::endl;
         }
@@ -71,10 +72,10 @@ public:
         
         // Configurar título
         titulo.setFont(fuente);
-        titulo.setString("JUEGO DE PIRAMIDE");
+        titulo.setString("Sobreviviendo a CETI");
         titulo.setCharacterSize(60);
-        titulo.setFillColor(sf::Color::Yellow);
-        titulo.setPosition(200.f, 80.f);
+        titulo.setFillColor(sf::Color(40,90,250));
+        titulo.setPosition(200.f, 90.f);
         
         // Configurar opciones del menú
         std::vector<std::string> textosOpciones = {"JUGAR", "VOLUMEN", "SALIR"};
@@ -85,27 +86,27 @@ public:
             opcion.setFont(fuente);
             opcion.setString(textosOpciones[i]);
             opcion.setCharacterSize(40);
-            opcion.setFillColor(sf::Color::White);
+            opcion.setFillColor(sf::Color(247,150,20));
             opcion.setPosition(350.f, posY + (i * 80.f));
             opciones.push_back(opcion);
         }
         
         // Configurar barra de volumen
-        barraVolumen.setSize(sf::Vector2f(300.f, 20.f));
+        barraVolumen.setSize(sf::Vector2f(250.f, 20.f));
         barraVolumen.setFillColor(sf::Color(100, 100, 100));
         barraVolumen.setPosition(300.f, 380.f);
         barraVolumen.setOutlineThickness(2.f);
-        barraVolumen.setOutlineColor(sf::Color::White);
+        barraVolumen.setOutlineColor(sf::Color::Black);
         
-        indicadorVolumen.setSize(sf::Vector2f(150.f, 20.f));
-        indicadorVolumen.setFillColor(sf::Color::Green);
+        indicadorVolumen.setSize(sf::Vector2f(125.f, 20.f));
+        indicadorVolumen.setFillColor(sf::Color(247,150,20));
         indicadorVolumen.setPosition(300.f, 380.f);
         
         textoVolumen.setFont(fuente);
-        textoVolumen.setString("Volumen: 50%");
-        textoVolumen.setCharacterSize(25);
+        textoVolumen.setString("50%");
+        textoVolumen.setCharacterSize(20);
         textoVolumen.setFillColor(sf::Color::White);
-        textoVolumen.setPosition(350.f, 340.f);
+        textoVolumen.setPosition(400.f, 380.f);
         
         actualizarColorOpciones();
     }
@@ -129,6 +130,9 @@ public:
             volumenActual += 5.f;
             if (volumenActual > 100.f) volumenActual = 100.f;
             actualizarVolumen();
+            if (gestorMusica) {
+                gestorMusica->setVolumen(volumenActual);
+            }
         }
     }
     
@@ -137,6 +141,9 @@ public:
             volumenActual -= 5.f;
             if (volumenActual < 0.f) volumenActual = 0.f;
             actualizarVolumen();
+            if (gestorMusica) {
+                gestorMusica->setVolumen(volumenActual);
+            }
         }
     }
     
@@ -169,9 +176,9 @@ public:
         
         // Mostrar controles de volumen si está ajustando
         if (ajustandoVolumen) {
-            window.draw(textoVolumen);
             window.draw(barraVolumen);
             window.draw(indicadorVolumen);
+            window.draw(textoVolumen);
         }
     }
     
@@ -204,8 +211,8 @@ private:
     }
     
     void actualizarVolumen() {
-        float ancho = (volumenActual / 100.f) * 300.f;
+        float ancho = (volumenActual / 100.f) * 250.f;
         indicadorVolumen.setSize(sf::Vector2f(ancho, 20.f));
-        textoVolumen.setString("Volumen: " + std::to_string(static_cast<int>(volumenActual)) + "%");
+        textoVolumen.setString(" " + std::to_string(static_cast<int>(volumenActual)) + "%");
     }
 };

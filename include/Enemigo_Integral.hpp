@@ -6,8 +6,10 @@
 class Enemigo_Integral : public Enemigo {
 private:
     sf::Clock relojMovimiento;
-    float tiempoEntreMovimientos = 2.0f;  // Más rápido que el profesor
+    float tiempoEntreMovimientos = 3.0f;  // Más rápido que el profesor
     bool moviendoAbajo = true;  // Patrón: zigzag
+    bool restauroColorEnUltimoMovimiento = false; // Nuevo: tracking de restauración
+    Casilla* casillaAnterior = nullptr; // Nueva: memoria de última casilla visitada
 
 public:
     Enemigo_Integral(Casilla& casillaInicial, const std::string& filePath)
@@ -30,36 +32,58 @@ public:
         
         // Movimiento más frecuente (patrón zigzag)
         if (relojMovimiento.getElapsedTime().asSeconds() >= tiempoEntreMovimientos) {
+            restauroColorEnUltimoMovimiento = false; // Reset antes del movimiento
+            
             int filaActual = casillaActual->getFila();
             int colActual = casillaActual->getColumna();
             
-            int filaDestino, colDestino;
+            // Intentar múltiples direcciones de movimiento
+            std::vector<std::pair<int, int>> direccionesPosibles;
             
             if (moviendoAbajo) {
-                // Moverse hacia abajo alternando izquierda/derecha
-                filaDestino = filaActual + 1;
-                // Alternar entre izquierda y derecha
-                colDestino = (std::rand() % 2 == 0) ? colActual : colActual + 1;
+                // Prioridad a bajar
+                direccionesPosibles.push_back({filaActual + 1, colActual});     // Abajo-izquierda
+                direccionesPosibles.push_back({filaActual + 1, colActual + 1}); // Abajo-derecha
+                direccionesPosibles.push_back({filaActual - 1, colActual});     // Arriba-izquierda
+                direccionesPosibles.push_back({filaActual - 1, colActual - 1}); // Arriba-derecha
             } else {
-                // Moverse hacia arriba (ocasionalmente)
-                filaDestino = filaActual - 1;
-                colDestino = colActual;
+                // Prioridad a subir
+                direccionesPosibles.push_back({filaActual - 1, colActual});     // Arriba-izquierda
+                direccionesPosibles.push_back({filaActual - 1, colActual - 1}); // Arriba-derecha
+                direccionesPosibles.push_back({filaActual + 1, colActual});     // Abajo-izquierda
+                direccionesPosibles.push_back({filaActual + 1, colActual + 1}); // Abajo-derecha
             }
             
-            // Intentar mover
-            Casilla* nuevaCasilla = tablero.getCasilla(filaDestino, colDestino);
+            // Intentar cada dirección hasta encontrar una válida
+            bool seMovio = false;
+            for (const auto& dir : direccionesPosibles) {
+                Casilla* nuevaCasilla = tablero.getCasilla(dir.first, dir.second);
+                // No volver a la casilla donde estaba antes (evitar oscilación)
+                if (nuevaCasilla != nullptr && nuevaCasilla != casillaAnterior) {
+                    // Restaurar el color de la casilla destino antes de moverse
+                    restauroColorEnUltimoMovimiento = nuevaCasilla->RestaurarColor();
+                    casillaAnterior = casillaActual; // Guardar casilla actual antes de moverse
+                    intentarMover(nuevaCasilla);
+                    seMovio = true;
+                    break;
+                }
+            }
             
-            if (nuevaCasilla == nullptr) {
-                // Si no puede moverse, simplemente cambia dirección (no muere)
+            // Si no pudo moverse en ninguna dirección (todas bloqueadas o son la anterior), 
+            // resetear memoria y cambiar patrón
+            if (!seMovio) {
+                casillaAnterior = nullptr;
                 moviendoAbajo = !moviendoAbajo;
-            } else {
-                // Restaurar el color de la casilla destino antes de moverse
-                nuevaCasilla->RestaurarColor();
-                intentarMover(nuevaCasilla);
             }
             
             relojMovimiento.restart();
         }
+    }
+    
+    bool restauroColor() {
+        bool resultado = restauroColorEnUltimoMovimiento;
+        restauroColorEnUltimoMovimiento = false; // Reset después de verificar
+        return resultado;
     }
     
     ~Enemigo_Integral() override = default;

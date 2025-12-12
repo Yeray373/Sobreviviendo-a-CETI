@@ -41,9 +41,11 @@ public:
     ~Jugador();
     bool intentarMover(Casilla* nuevaCasilla, int filaDestino, int colDestino);  // Retorna false si murió
     void MoverACasilla(Casilla& nuevaCasilla);
+    bool finalizarMovimiento(); // Nueva: retorna true si coloró una casilla nueva
     void morir();
     void respawn();
     bool getEstaVivo() const { return estaVivo; }
+    bool getEstaMoviendose() const { return estaMoviendose; }
     void Dibujar(Pantalla &window);
     Casilla getCasillaActual();
     void cambiarAnimacion(AnimacionEstado nuevoEstado);  // Cambiar animación
@@ -107,7 +109,6 @@ void Jugador::Dibujar(Pantalla &window)
             progreso = 1.0f;
             estaMoviendose = false;
             casillaActual = casillaSiguiente;
-            casillaActual->CambiarColor();
             casillaSiguiente = nullptr;
             cambiarAnimacion(AnimacionEstado::PARADO);
         }
@@ -195,11 +196,21 @@ void Jugador::morir()
     estaCayendo = true;
     // Inicializar posición de caída desde la posición actual
     if (casillaActual) {
-        posicionActualCaida = casillaActual->getPosicion();
+        posicionCaida = casillaActual->getPosicion();
+        posicionActualCaida = posicionCaida;
     }
     relojCaida.restart();
     cambiarAnimacion(AnimacionEstado::CAER);
     // Puedes agregar efectos de sonido, partículas, etc.
+}
+
+bool Jugador::finalizarMovimiento()
+{
+    // Llamar cuando el movimiento se complete para colorear la casilla
+    if (casillaActual) {
+        return casillaActual->CambiarColor(); // Retorna true si era nueva
+    }
+    return false;
 }
 
 void Jugador::respawn()

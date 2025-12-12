@@ -26,16 +26,22 @@ public:
         window.draw(izq_cubo);
     }
     
-    void CambiarColor() {
+    bool CambiarColor() {
         if (!visitada) {
             visitada = true;
             tapa_cubo.setFillColor(colorVisitado);
+            return true; // Retorna true si cambió el color
         }
+        return false; // Ya estaba visitada
     }
     
-    void RestaurarColor() {
-        visitada = false;
-        tapa_cubo.setFillColor(colorOriginal);
+    bool RestaurarColor() {
+        if (visitada) {
+            visitada = false;
+            tapa_cubo.setFillColor(colorOriginal);
+            return true; // Retorna true si restauró el color
+        }
+        return false; // Ya estaba sin visitar
     }
     
     sf::Vector2f getPosicion() {
