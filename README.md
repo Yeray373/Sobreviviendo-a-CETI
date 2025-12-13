@@ -40,4 +40,11 @@
 ## 📜 Créditos
 - Referencias o inspiraciones: CENTRO DE ENSEÑANZA TÉCNICA INDUSTRIAL PLANTEL COLOMOS y sus estudiantes, juego arcade Q*bert, 
 - Agradecimientos: Ing. José Ramon Navarro Márquez, CETI Colomos,
+### Musica
+- _comput3r_ https://www.tiktok.com/@_comput3r_?is_from_webapp=1&sender_device=pc
+- Outkast - Hey Ya!  https://youtu.be/PWgvGjAhvIw?si=RnSm7yrJ8_4X-ESe
+- mind.savepoint    https://www.tiktok.com/@mind.savepoint?is_from_webapp=1&sender_device=pc
+- raulluan01    https://www.tiktok.com/@raulluan01/video/7052060963595488517?is_from_webapp=1&sender_device=pc
+
+
 
