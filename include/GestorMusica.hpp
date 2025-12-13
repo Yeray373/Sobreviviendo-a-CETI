@@ -17,22 +17,22 @@ public:
         // Intentar cargar las músicas
         if (musicaMenu.openFromFile("./assets/music/menu.mp3")) {
             musicaMenu.setLoop(true);
-            std::cout << "Musica de menu cargada" << std::endl;
+            
         }
         
         if (musicaJuego.openFromFile("./assets/music/game music.mp3")) {
             musicaJuego.setLoop(true);
-            std::cout << "Musica de juego cargada" << std::endl;
+            
         }
         
         if (musicaVictoria.openFromFile("./assets/music/victoria.mp3")) {
             musicaVictoria.setLoop(false);
-            std::cout << "Musica de victoria cargada" << std::endl;
+            
         }
         
         if (musicaDerrota.openFromFile("./assets/music/derrota.mp3")) {
             musicaDerrota.setLoop(false);
-            std::cout << "Musica de derrota cargada" << std::endl;
+           
         }
         
         actualizarVolumen();

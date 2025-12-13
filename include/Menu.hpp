@@ -44,10 +44,8 @@ public:
         
         if (fuente.loadFromFile("./assets/fonts/Supersonic Rocketship.ttf")) {
             fuenteCargada = true;
-            std::cout << "Fuente cargada: Supersonic Rocketship.ttf" << std::endl;
         } else if (fuente.loadFromFile("C:/Windows/Fonts/Arial.ttf")) {
             fuenteCargada = true;
-            std::cout << "Fuente cargada: Arial.ttf" << std::endl;
         } else {
             std::cout << "ERROR: No se pudo cargar ninguna fuente!" << std::endl;
         }
